@@ -11,7 +11,8 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173 — Vite proxies `/api` to the backend.
+Open http://localhost:5173 — Vite proxies `/api` to the backend. Set `VITE_PROXY_TARGET` to
+point the proxy somewhere other than `:8080`.
 
 ## Docker
 
@@ -29,4 +30,7 @@ Compose builds this image and serves it on http://localhost (port 80), proxying 
   `/oauth2/authorization/google` and the token comes back on `/auth/callback`. It is disabled when
   the server reports Google as unconfigured.
 - Menu, quiz (think → reveal 5 options → answer → explanation), materials, settings, stats
+- Practice → SQL → difficulty → task. The task screen shows the dataset schema, the statement
+  and the result being aimed at; you write a query, run it, and the backend compares your rows
+  with the reference solution's. Any query producing the same result counts as correct.
 - Admin (role `ADMIN` only): user list and role change
