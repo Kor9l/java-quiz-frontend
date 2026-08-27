@@ -25,6 +25,8 @@ Compose builds this image and serves it on http://localhost (port 80), proxying 
 
 ## Screens
 
-- Login / register (email + password), Google button is a stub
+- Login / register (email + password) and Google sign-in; the button redirects to the backend's
+  `/oauth2/authorization/google` and the token comes back on `/auth/callback`. It is disabled when
+  the server reports Google as unconfigured.
 - Menu, quiz (think → reveal 5 options → answer → explanation), materials, settings, stats
 - Admin (role `ADMIN` only): user list and role change

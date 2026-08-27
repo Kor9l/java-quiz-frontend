@@ -26,7 +26,8 @@ export default function MenuPage() {
     ? t("settings.topics.all")
     : activeTopics.map((topic) => loc(topic.name)).join(", ");
   const totalSections = topics.reduce((sum, topic) => sum + topic.sectionCount, 0);
-  const readSections = topics.reduce((sum, topic) => sum + topic.readCount, 0);
+  // A section flagged for re-reading has still been read, so it counts here.
+  const readSections = topics.reduce((sum, topic) => sum + topic.readCount + topic.rereadCount, 0);
   const overall = stats?.overall;
 
   return (

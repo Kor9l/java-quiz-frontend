@@ -49,6 +49,7 @@ export default function StatsPage() {
         <div className="card tile"><div className="muted">{t("stats.accuracy")}</div><div className="value">{pct(o.accuracy)}</div></div>
         <div className="card tile"><div className="muted">{t("stats.bestStreak")}</div><div className="value">{o.bestStreak}</div></div>
         <div className="card tile"><div className="muted">{t("stats.time")}</div><div className="value">{duration(o.totalTimeMillis, t)}</div></div>
+        <div className="card tile"><div className="muted">{t("stats.sessions")}</div><div className="value">{o.sessionCount}</div></div>
         <div className="card tile"><div className="muted">{t("stats.coverage")}</div><div className="value">{t("stats.coverage.value", o.seenQuestions, o.bankSize)}</div></div>
       </div>
       <div className="card" style={{ marginBottom: 16 }}>
@@ -97,7 +98,7 @@ export default function StatsPage() {
             <tbody>
               {data.recent.map((row, i) => (
                 <tr key={i}>
-                  <td>{row.finishedAt ? new Date(row.finishedAt).toLocaleString() : ""}</td>
+                  <td>{row.startedAt ? new Date(row.startedAt).toLocaleString() : ""}</td>
                   <td>{row.correct}/{row.answered} ({pct(row.accuracy)})</td>
                   <td>{duration(row.durationMillis, t)}</td>
                   <td>{row.infinite ? t("stats.mode.infinite") : t("stats.mode.finite", row.targetCount)}</td>
