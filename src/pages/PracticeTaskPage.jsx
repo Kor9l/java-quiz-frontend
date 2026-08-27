@@ -148,9 +148,19 @@ export default function PracticeTaskPage() {
             {task.solved ? ` · ${t("practice.solved")}` : ""}
           </p>
         </div>
-        <button className="btn" onClick={() => navigate(`/practice/${track}/${difficulty}`)}>
-          {t("common.back")}
-        </button>
+        <div className="row">
+          {task.material && (
+            <button
+              className="btn"
+              onClick={() => navigate(`/materials/${task.material.topicId}/${task.material.sectionId}`)}
+            >
+              {t("practice.readMaterial")}
+            </button>
+          )}
+          <button className="btn" onClick={() => navigate(`/practice/${track}/${difficulty}`)}>
+            {t("common.back")}
+          </button>
+        </div>
       </div>
 
       <div className="layout-split">
