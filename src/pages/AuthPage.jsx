@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../api";
 import { useApp } from "../AppContext";
 import { useAuth } from "../AuthContext";
@@ -14,7 +14,22 @@ export default function AuthPage() {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
   const [googleMsg, setGoogleMsg] = useState("");
+  const [google, setGoogle] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    api.get("/api/auth/providers")
+      .then((data) => setGoogle(data.google || { enabled: false }))
+      .catch(() => setGoogle({ enabled: false }));
+  }, []);
+
+  useEffect(() => {
+    const failed = searchParams.get("googleError");
+    if (failed) {
+      setGoogleMsg(failed);
+    }
+  }, [searchParams]);
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -34,13 +49,14 @@ export default function AuthPage() {
     }
   }
 
-  async function onGoogle() {
+  function onGoogle() {
     setGoogleMsg("");
-    try {
-      await api.post("/api/auth/google", { idToken: "" });
-    } catch (err) {
-      setGoogleMsg(err.message || t("auth.googleStub"));
+    if (!google?.enabled || !google.authorizationUrl) {
+      setGoogleMsg(google?.message || t("auth.googleStub"));
+      return;
     }
+    // Full page navigation: the OAuth2 redirect flow cannot run inside fetch().
+    window.location.assign(google.authorizationUrl);
   }
 
   return (
@@ -69,11 +85,11 @@ export default function AuthPage() {
             {mode === "login" ? t("auth.submitLogin") : t("auth.submitRegister")}
           </button>
         </form>
-        <button className="btn google" type="button" onClick={onGoogle}>
+        <button className="btn google" type="button" onClick={onGoogle} disabled={google !== null && !google.enabled}>
           {t("auth.google")}
         </button>
         {googleMsg && <div className="banner">{googleMsg}</div>}
-        <p className="muted">{t("auth.googleStub")}</p>
+        {google !== null && !google.enabled && <p className="muted">{t("auth.googleStub")}</p>}
         <button className="btn" type="button" onClick={() => setMode(mode === "login" ? "register" : "login")}>
           {mode === "login" ? t("auth.noAccount") : t("auth.hasAccount")}
         </button>

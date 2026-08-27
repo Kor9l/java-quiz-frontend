@@ -30,6 +30,18 @@ export function AuthProvider({ children }) {
       setUser(data.user);
       return data.user;
     },
+    async loginWithToken(token) {
+      setToken(token);
+      try {
+        const me = await api.get("/api/auth/me");
+        setUser(me);
+        return me;
+      } catch (err) {
+        setToken(null);
+        setUser(null);
+        throw err;
+      }
+    },
     async register(email, password, displayName) {
       const data = await api.post("/api/auth/register", { email, password, displayName });
       setToken(data.token);
