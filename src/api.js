@@ -1,5 +1,9 @@
 const TOKEN_KEY = "java-quiz-token";
 
+// In production the static build and the API sit on different origins, so requests need an
+// absolute base. Left empty in dev, where Vite proxies /api to the local backend.
+const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/+$/, "");
+
 export function getToken() {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -23,7 +27,7 @@ async function request(path, options = {}) {
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  const response = await fetch(path, { ...options, headers });
+  const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
   // An expired or revoked token would otherwise leave every screen showing an error
   // banner; drop it and let the router show the login page instead.
   if (response.status === 401 && token && !PUBLIC_PATHS.includes(path)) {
