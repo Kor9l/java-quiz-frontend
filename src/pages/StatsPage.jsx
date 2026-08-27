@@ -49,6 +49,7 @@ export default function StatsPage() {
         <div className="card tile"><div className="muted">{t("stats.accuracy")}</div><div className="value">{pct(o.accuracy)}</div></div>
         <div className="card tile"><div className="muted">{t("stats.bestStreak")}</div><div className="value">{o.bestStreak}</div></div>
         <div className="card tile"><div className="muted">{t("stats.time")}</div><div className="value">{duration(o.totalTimeMillis, t)}</div></div>
+        <div className="card tile"><div className="muted">{t("stats.sessions")}</div><div className="value">{o.sessionCount}</div></div>
         <div className="card tile"><div className="muted">{t("stats.coverage")}</div><div className="value">{t("stats.coverage.value", o.seenQuestions, o.bankSize)}</div></div>
       </div>
       <div className="card" style={{ marginBottom: 16 }}>

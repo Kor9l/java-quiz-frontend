@@ -49,6 +49,15 @@ export default function QuizPage() {
     }
   }
 
+  // Only leave the quiz once the session was actually closed server-side, so a failed
+  // quit surfaces its error instead of silently dropping the run.
+  async function quit() {
+    const closed = await call(`/api/quiz/${session.id}/quit`);
+    if (closed) {
+      navigate("/");
+    }
+  }
+
   function onStageClick() {
     if (!session || busy) return;
     if (session.stage === "QUESTION_ONLY") {
@@ -65,7 +74,7 @@ export default function QuizPage() {
         if (session.answeredCount > 0 && session.stage !== "FINISHED" && !window.confirm(t("quiz.quit.confirm"))) {
           return;
         }
-        call(`/api/quiz/${session.id}/quit`).then(() => navigate("/"));
+        quit();
         return;
       }
       if (event.code === "Space" || event.key === "Enter") {
@@ -115,15 +124,15 @@ export default function QuizPage() {
           <div className="card tile"><div className="muted">{t("quiz.result.time")}</div><div className="value">{formatTime(session.elapsedMillis)}</div></div>
           <div className="card tile"><div className="muted">{t("quiz.result.streak")}</div><div className="value">{session.bestStreak}</div></div>
         </div>
-        {session.weakSectionKeys?.length > 0 && (
+        {session.weakSections?.length > 0 && (
           <div className="card" style={{ marginBottom: 16 }}>
             <h3>{t("quiz.result.weak")}</h3>
             <div className="col">
-              {session.weakSectionKeys.map((key) => (
-                <button key={key} className="btn" onClick={() => {
-                  const [topicId, sectionId] = key.split("/");
-                  navigate(`/materials/${topicId}/${sectionId}`);
-                }}>{key}</button>
+              {session.weakSections.map((section) => (
+                <button key={section.key} className="btn"
+                  onClick={() => navigate(`/materials/${section.topicId}/${section.sectionId}`)}>
+                  {loc(section.topicName)} · {loc(section.sectionTitle)}
+                </button>
               ))}
             </div>
           </div>
@@ -131,7 +140,9 @@ export default function QuizPage() {
         <div className="row">
           <button className="btn primary" onClick={() => {
             setSession(null);
-            api.post("/api/quiz/start", location.state?.start || {}).then(setSession);
+            api.post("/api/quiz/start", location.state?.start || {})
+              .then(setSession)
+              .catch((err) => setError(err.message));
           }}>{t("quiz.result.again")}</button>
           <button className="btn" onClick={() => navigate("/materials")}>{t("quiz.result.toMaterials")}</button>
           <button className="btn" onClick={() => navigate("/")}>{t("quiz.result.toMenu")}</button>
@@ -150,7 +161,7 @@ export default function QuizPage() {
         <h1>{t("quiz.title")}</h1>
         <button className="btn" onClick={() => {
           if (session.answeredCount > 0 && !window.confirm(t("quiz.quit.confirm"))) return;
-          call(`/api/quiz/${session.id}/quit`).then(() => navigate("/"));
+          quit();
         }}>{t("quiz.quit")}</button>
       </div>
       <div className="row" style={{ marginBottom: 10 }}>
@@ -207,7 +218,7 @@ export default function QuizPage() {
                 {q.sources?.length > 0 && (
                   <div>
                     <strong>{t("quiz.sources")}</strong>
-                    <ul>{q.sources.map((url) => <li key={url}><a href={url} target="_blank" rel="noreferrer">{url}</a></li>)}</ul>
+                    <ul>{q.sources.map((url, i) => <li key={`${i}-${url}`}><a href={url} target="_blank" rel="noreferrer">{url}</a></li>)}</ul>
                   </div>
                 )}
                 <p className="muted">{t("quiz.hint.next")}</p>

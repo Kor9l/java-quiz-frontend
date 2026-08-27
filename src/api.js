@@ -12,6 +12,8 @@ export function setToken(token) {
   }
 }
 
+const PUBLIC_PATHS = ["/api/auth/login", "/api/auth/register", "/api/auth/providers"];
+
 async function request(path, options = {}) {
   const headers = { ...(options.headers || {}) };
   if (options.body && !(options.body instanceof FormData)) {
@@ -22,6 +24,14 @@ async function request(path, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
   const response = await fetch(path, { ...options, headers });
+  // An expired or revoked token would otherwise leave every screen showing an error
+  // banner; drop it and let the router show the login page instead.
+  if (response.status === 401 && token && !PUBLIC_PATHS.includes(path)) {
+    setToken(null);
+    if (window.location.pathname !== "/login") {
+      window.location.assign("/login");
+    }
+  }
   if (response.status === 204) {
     return null;
   }

@@ -53,7 +53,7 @@ export default function SettingsPage() {
               <label key={topic.id} className="check">
                 <input type="checkbox" checked={checked} onChange={() => toggleTopic(topic.id)} />
                 <span>
-                  {loc(topic.name)} — {t("settings.topics.questions", topic.questionCount)}, {t("settings.topics.read", topic.readCount, topic.sectionCount)}
+                  {loc(topic.name)} — {t("settings.topics.questions", topic.questionCount)}, {t("settings.topics.read", topic.readCount + topic.rereadCount, topic.sectionCount)}
                   {topic.rereadCount > 0 ? `, ${t("settings.topics.reread", topic.rereadCount)}` : ""}
                 </span>
               </label>
