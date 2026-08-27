@@ -14,6 +14,14 @@ export default function SettingsPage() {
   const [custom, setCustom] = useState(!PRESETS.includes(settings.questionCount));
 
   useEffect(() => setForm(settings), [settings]);
+  // The note confirms one save; leaving it up makes later unsaved edits look saved.
+  useEffect(() => {
+    if (!saved) {
+      return undefined;
+    }
+    const timer = setTimeout(() => setSaved(false), 3000);
+    return () => clearTimeout(timer);
+  }, [saved]);
   useEffect(() => {
     api.get("/api/topics").then(setTopics).catch(() => setTopics([]));
   }, []);

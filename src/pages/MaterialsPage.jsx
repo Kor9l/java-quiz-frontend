@@ -99,7 +99,11 @@ export default function MaterialsPage() {
           {material && (
             <div className="col">
               <h2>{loc(material.title)}</h2>
-              <p className="muted">{t("materials.estimated", material.estimatedMinutes)} · {t("materials.questionCount", material.questionCount)}</p>
+              <p className="muted">
+                {topics.find((topic) => topic.id === material.topicId)
+                  ? `${loc(topics.find((topic) => topic.id === material.topicId).name)} · ` : ""}
+                {t("materials.estimated", material.estimatedMinutes)} · {t("materials.questionCount", material.questionCount)}
+              </p>
               {material.readState === "NEEDS_REREAD" && (
                 <div className="banner">
                   {t("materials.rereadHint")}
@@ -110,7 +114,7 @@ export default function MaterialsPage() {
                 {material.readState === "UNREAD"
                   ? <button className="btn primary" onClick={() => mark(true)}>{t("materials.markRead")}</button>
                   : <button className="btn" onClick={() => mark(false)}>{t("materials.markUnread")}</button>}
-                {material.readState !== "UNREAD" && material.readState === "NEEDS_REREAD" && (
+                {material.readState === "NEEDS_REREAD" && (
                   <button className="btn" onClick={() => mark(true)}>{t("materials.markRead")}</button>
                 )}
                 <button className="btn" onClick={() => navigate("/quiz", {

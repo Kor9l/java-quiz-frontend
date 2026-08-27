@@ -98,7 +98,7 @@ export default function StatsPage() {
             <tbody>
               {data.recent.map((row, i) => (
                 <tr key={i}>
-                  <td>{row.finishedAt ? new Date(row.finishedAt).toLocaleString() : ""}</td>
+                  <td>{row.startedAt ? new Date(row.startedAt).toLocaleString() : ""}</td>
                   <td>{row.correct}/{row.answered} ({pct(row.accuracy)})</td>
                   <td>{duration(row.durationMillis, t)}</td>
                   <td>{row.infinite ? t("stats.mode.infinite") : t("stats.mode.finite", row.targetCount)}</td>
