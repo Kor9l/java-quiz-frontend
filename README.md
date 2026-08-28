@@ -25,28 +25,30 @@ Do **not** start this project alone. From `../java-quiz-backend`:
 
 Compose builds this image and serves it on http://localhost (port 80), proxying `/api` to the backend container.
 
-## Deploy (Cloudflare Pages)
+## Deploy (Render)
 
-Unlike the Docker setup there is no proxy in production: the bundle calls the Render backend
-directly, cross-origin, so that origin must also be listed in the backend's `CORS_ORIGINS`.
+Unlike the Docker setup there is no proxy in production: the bundle calls the backend
+directly, cross-origin, so this site's origin must also be listed in the backend's
+`CORS_ORIGINS`, and in its `APP_FRONTEND_URL` for the Google redirect to land here.
 
-1. Create the Pages project once, from a machine with `wrangler` logged in:
+1. **Render** — *New → Blueprint*, pointed at this repo. [`render.yaml`](render.yaml) declares a
+   free static site; nothing has to be entered in the dashboard, because `VITE_API_BASE` lives in
+   the blueprint rather than behind `sync: false`. Render prints the assigned URL —
+   `https://java-quiz-frontend.onrender.com` unless the name was taken and it appended a suffix.
+   Whatever it prints is what goes into the backend's `CORS_ORIGINS` and `APP_FRONTEND_URL`.
+2. **GitHub** — *Settings → Secrets and variables → Actions*, add the secret
+   `RENDER_DEPLOY_HOOK` (Render → site → *Settings → Deploy Hook*).
 
-   ```bash
-   npx wrangler pages project create java-quiz --production-branch=master
-   ```
+Every push to `master` then runs [the workflow](.github/workflows/deploy.yml): `npm run build`
+first as a gate, and the deploy hook only on success. Render's own auto-deploy is off in
+`render.yaml`, so a red build never reaches production. Pull requests build without deploying.
 
-2. In *Settings → Secrets and variables → Actions* of this repo add
+The build that ships is Render's, not the workflow's — the workflow only proves the commit
+compiles. `VITE_API_BASE` is baked into the bundle at build time, so pointing the UI at a
+different backend means editing `render.yaml` and redeploying, not flipping a runtime setting.
 
-   - variable `VITE_API_BASE` — `https://<service>.onrender.com` (see [`.env.example`](.env.example))
-   - secret `CLOUDFLARE_API_TOKEN` — token with the *Cloudflare Pages: Edit* permission
-   - secret `CLOUDFLARE_ACCOUNT_ID`
-
-Every push to `master` then builds and publishes through
-[the workflow](.github/workflows/deploy.yml); pull requests build without publishing.
-
-`VITE_API_BASE` is baked into the bundle at build time, so pointing the UI at a different backend
-means re-running the workflow, not flipping a runtime setting.
+SPA routing is the one thing that did not carry over from Cloudflare: `public/_redirects` was a
+Pages file. Render reads the same rule from the `routes` block in `render.yaml`.
 
 ## Screens
 
