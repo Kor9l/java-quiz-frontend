@@ -12,7 +12,8 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173 — Vite proxies `/api` to the backend.
+Open http://localhost:5173 — Vite proxies `/api` to the backend. Set `VITE_PROXY_TARGET` to
+point the proxy somewhere other than `:8080`.
 
 ## Docker
 
@@ -53,4 +54,9 @@ means re-running the workflow, not flipping a runtime setting.
   `/oauth2/authorization/google` and the token comes back on `/auth/callback`. It is disabled when
   the server reports Google as unconfigured.
 - Menu, quiz (think → reveal 5 options → answer → explanation), materials, settings, stats
+- Practice → SQL → difficulty → task. The task screen shows the dataset schema, the statement
+  and the result being aimed at; you write a query, run it, and the backend compares your rows
+  with the reference solution's. Any query producing the same result counts as correct.
+  SQL articles and exercises link to each other: a task offers the section it drills, and a
+  section offers its exercises alongside its quiz.
 - Admin (role `ADMIN` only): user list and role change
