@@ -1,0 +1,29 @@
+# Render blueprint for the UI. Create the site once via "New > Blueprint" pointing at this repo;
+# afterwards every setting below is managed from here, not from the dashboard.
+#
+# Free static sites are served from Render's CDN and never sleep — only the backend web service
+# does. A slow first visit after an idle period is the API waking up, not this.
+services:
+  - type: web
+    name: java-quiz-frontend
+    runtime: static
+    branch: master
+    # GitHub Actions triggers the deploy through a deploy hook, but only after the build
+    # passes. Letting Render also watch the branch would deploy broken commits in parallel.
+    autoDeploy: false
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      # Baked into the bundle at build time, so changing it needs a redeploy, not a restart.
+      # It is the address the browser calls, so it is public by nature and belongs in git
+      # rather than behind `sync: false` — and a value that cannot go missing removes the
+      # failure mode where an empty base ships a bundle that calls /api on its own origin.
+      - key: VITE_API_BASE
+        value: https://java-quiz-backend.onrender.com
+    routes:
+      # react-router uses real paths, so a hard reload of /materials or /auth/callback must
+      # still be served index.html instead of a 404. Cloudflare read that from
+      # public/_redirects; Render only reads it from here.
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -10,12 +10,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Build and publish
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    concurrency:
-      group: pages-deploy
-      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
 
@@ -27,29 +24,29 @@ jobs:
       - name: Install
         run: npm ci
 
-      # An empty base builds a bundle that requests /api on the Pages origin, where nothing
-      # answers. That failure only shows up in the browser, so catch it here instead.
-      - name: Check API base is configured
-        if: github.event_name != 'pull_request'
-        env:
-          VITE_API_BASE: ${{ vars.VITE_API_BASE }}
-        run: |
-          if [ -z "$VITE_API_BASE" ]; then
-            echo "::error::Repository variable VITE_API_BASE is not set (Settings > Secrets and variables > Actions > Variables)."
-            exit 1
-          fi
-
+      # A gate, not the artefact: the bundle that ships is the one Render builds, with
+      # VITE_API_BASE from render.yaml. This only proves the commit compiles before the
+      # deploy hook fires.
       - name: Build
-        env:
-          VITE_API_BASE: ${{ vars.VITE_API_BASE }}
         run: npm run build
 
-      - name: Publish to Cloudflare Pages
-        if: github.event_name != 'pull_request'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # --branch must match the project's production branch, otherwise Pages files the
-          # upload as a preview deployment and the live site never changes.
-          command: pages deploy dist --project-name=java-quiz --branch=master
+  deploy:
+    name: Deploy to Render
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    # Render rejects overlapping deploys; queue them instead of racing.
+    concurrency:
+      group: render-deploy
+      cancel-in-progress: false
+    steps:
+      - name: Trigger Render deploy
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::error::Secret RENDER_DEPLOY_HOOK is not set (Render dashboard > Settings > Deploy Hook)."
+            exit 1
+          fi
+          curl -fsS -X POST "$DEPLOY_HOOK" > /dev/null
+          echo "Deploy requested. Build logs: https://dashboard.render.com"
