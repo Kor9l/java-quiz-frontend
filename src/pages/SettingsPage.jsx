@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api";
-import { useApp } from "../AppContext";
+import { LEVELS, useApp } from "../AppContext";
 
 const PRESETS = [10, 20, 30, 50, 100];
 
@@ -51,6 +51,21 @@ export default function SettingsPage() {
             <option value="ru">Русский</option>
             <option value="en">English</option>
           </select>
+        </div>
+        <div className="card col">
+          <h3>{t("settings.level")}</h3>
+          <div className="row">
+            {LEVELS.map((level) => (
+              <button
+                key={level}
+                className={`btn ${form.level === level ? "primary" : ""}`}
+                onClick={() => setForm({ ...form, level })}
+              >
+                {t(`level.${level}`)}
+              </button>
+            ))}
+          </div>
+          <p className="muted">{t("settings.level.hint")}</p>
         </div>
         <div className="card col">
           <h3>{t("settings.topics")}</h3>

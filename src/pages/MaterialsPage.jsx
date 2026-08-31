@@ -9,8 +9,15 @@ function Dot({ state }) {
   return <span className={cls} />;
 }
 
+function Level({ level, label }) {
+  if (!level) {
+    return null;
+  }
+  return <span className={`level ${level.toLowerCase()}`} title={label}>{label}</span>;
+}
+
 export default function MaterialsPage() {
-  const { t, loc } = useApp();
+  const { t, loc, aboveTrack } = useApp();
   const navigate = useNavigate();
   const params = useParams();
   const [topics, setTopics] = useState([]);
@@ -82,6 +89,10 @@ export default function MaterialsPage() {
                 <button
                   key={section.id}
                   className={`tree-item ${topic.id === topicId && section.id === sectionId ? "active" : ""}`}
+                  // Dimmed rather than hidden: the section is still readable, and the reader may
+                  // already have progress on it.
+                  style={aboveTrack(section.level) ? { opacity: 0.6 } : undefined}
+                  title={aboveTrack(section.level) ? t("materials.level.above") : undefined}
                   onClick={() => {
                     setTopicId(topic.id);
                     setSectionId(section.id);
@@ -89,6 +100,7 @@ export default function MaterialsPage() {
                   }}
                 >
                   <Dot state={section.readState} /> {loc(section.title)}
+                  <Level level={section.level} label={t(`level.${section.level}`)} />
                 </button>
               ))}
             </div>
@@ -98,11 +110,15 @@ export default function MaterialsPage() {
           {!material && <p className="muted">{t("materials.empty")}</p>}
           {material && (
             <div className="col">
-              <h2>{loc(material.title)}</h2>
+              <div className="row">
+                <h2>{loc(material.title)}</h2>
+                <Level level={material.level} label={t(`level.${material.level}`)} />
+              </div>
               <p className="muted">
                 {topics.find((topic) => topic.id === material.topicId)
                   ? `${loc(topics.find((topic) => topic.id === material.topicId).name)} · ` : ""}
                 {t("materials.estimated", material.estimatedMinutes)} · {t("materials.questionCount", material.questionCount)}
+                {aboveTrack(material.level) ? ` · ${t("materials.level.above")}` : ""}
               </p>
               {material.readState === "NEEDS_REREAD" && (
                 <div className="banner">

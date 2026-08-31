@@ -9,7 +9,7 @@ function pct(value) {
 }
 
 export default function MenuPage() {
-  const { t, loc, settings } = useApp();
+  const { t, loc, settings, track } = useApp();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
@@ -48,7 +48,10 @@ export default function MenuPage() {
       </div>
       <div className="menu-grid">
         <button className="btn menu-btn" onClick={() => navigate("/quiz")}>
-          <strong>{t("menu.start")}</strong>
+          <strong>
+            {t("menu.start")}
+            <span className={`level ${track.toLowerCase()}`}>{t(`level.${track}`)}</span>
+          </strong>
           <span>{t("menu.start.hint", settings.infiniteMode ? "∞" : settings.questionCount, topicLabel)}</span>
         </button>
         <button className="btn menu-btn" onClick={() => navigate("/materials")}>
