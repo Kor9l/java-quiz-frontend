@@ -11,6 +11,7 @@
   --accent: #2f6feb;
   --accent-hover: #1f5cdb;
   --accent-fg: #ffffff;
+  --accent-bg: #ddeaff;
   --success: #1a7f37;
   --success-bg: #dafbe1;
   --danger: #cf222e;
@@ -34,6 +35,7 @@
   --accent: #66aaff;
   --accent-hover: #8cc0ff;
   --accent-fg: #0d1117;
+  --accent-bg: #16273d;
   --success: #6cc36f;
   --success-bg: #17301f;
   --danger: #f0736b;
@@ -222,6 +224,20 @@ button.option:hover {
   cursor: pointer;
 }
 .tree-item.active { background: var(--card-alt); }
+.level {
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.level.junior { color: var(--success); background: var(--success-bg); }
+.level.middle { color: var(--accent); background: var(--accent-bg); }
+.level.senior { color: var(--warning); background: var(--warning-bg); }
 .markdown h1, .markdown h2, .markdown h3 { margin-top: 16px; }
 .markdown p, .markdown ul, .markdown ol { margin: 8px 0; line-height: 1.55; }
 .markdown pre { background: var(--code-bg); padding: 12px; border-radius: 8px; overflow-x: auto; }
