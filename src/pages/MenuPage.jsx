@@ -14,10 +14,12 @@ export default function MenuPage() {
   const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
   const [stats, setStats] = useState(null);
+  const [practice, setPractice] = useState([]);
 
   useEffect(() => {
     api.get("/api/topics").then(setTopics).catch(() => setTopics([]));
     api.get("/api/stats").then(setStats).catch(() => setStats(null));
+    api.get("/api/practice").then(setPractice).catch(() => setPractice([]));
   }, []);
 
   const selected = settings.selectedTopics || [];
@@ -29,6 +31,8 @@ export default function MenuPage() {
   // A section flagged for re-reading has still been read, so it counts here.
   const readSections = topics.reduce((sum, topic) => sum + topic.readCount + topic.rereadCount, 0);
   const overall = stats?.overall;
+  const practiceTotal = practice.reduce((sum, track) => sum + track.taskCount, 0);
+  const practiceSolved = practice.reduce((sum, track) => sum + track.solvedCount, 0);
 
   return (
     <div className="page">
@@ -53,6 +57,10 @@ export default function MenuPage() {
         <button className="btn menu-btn" onClick={() => navigate("/materials")}>
           <strong>{t("menu.materials")}</strong>
           <span>{t("menu.materials.hint", readSections, totalSections)}</span>
+        </button>
+        <button className="btn menu-btn" onClick={() => navigate("/practice")}>
+          <strong>{t("menu.practice")}</strong>
+          <span>{t("menu.practice.hint", practiceSolved, practiceTotal)}</span>
         </button>
         <button className="btn menu-btn" onClick={() => navigate("/settings")}>
           <strong>{t("menu.settings")}</strong>

@@ -265,5 +265,49 @@ th { color: var(--muted); font-weight: 600; }
   padding: 10px 12px;
   font-size: 14px;
 }
+.banner.success { background: var(--success-bg); color: var(--success); }
+.banner.danger { background: var(--danger-bg); color: var(--danger); }
+
+/* Practice: SQL editor, dataset schema and result grids. */
+.sql-editor {
+  width: 100%;
+  min-height: 180px;
+  resize: vertical;
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  tab-size: 2;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--code-bg);
+  color: var(--text-strong);
+}
+.sql-editor:focus { border-color: var(--accent); }
+
+/* Result sets can be wider than the card; scroll the grid, never the page. */
+.table-scroll { overflow-x: auto; }
+.table-scroll table { min-width: 100%; width: max-content; }
+.table-scroll td { white-space: nowrap; font-family: "Cascadia Mono", Consolas, monospace; font-size: 13px; }
+
+.schema-table {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 12px;
+}
+.schema-table-name {
+  background: var(--card-alt);
+  padding: 5px 8px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+.schema-column {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 8px;
+}
 .check { display: flex; gap: 8px; align-items: center; }
 .header-bar { margin-bottom: 18px; }

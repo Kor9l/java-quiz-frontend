@@ -5,6 +5,10 @@ import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 import MenuPage from "./pages/MenuPage";
 import QuizPage from "./pages/QuizPage";
 import MaterialsPage from "./pages/MaterialsPage";
+import PracticePage from "./pages/PracticePage";
+import PracticeTrackPage from "./pages/PracticeTrackPage";
+import PracticeTaskListPage from "./pages/PracticeTaskListPage";
+import PracticeTaskPage from "./pages/PracticeTaskPage";
 import SettingsPage from "./pages/SettingsPage";
 import StatsPage from "./pages/StatsPage";
 import AdminPage from "./pages/AdminPage";
@@ -36,6 +40,10 @@ export default function App() {
       <Route path="/quiz" element={<Guard><QuizPage /></Guard>} />
       <Route path="/materials" element={<Guard><MaterialsPage /></Guard>} />
       <Route path="/materials/:topicId/:sectionId" element={<Guard><MaterialsPage /></Guard>} />
+      <Route path="/practice" element={<Guard><PracticePage /></Guard>} />
+      <Route path="/practice/:track" element={<Guard><PracticeTrackPage /></Guard>} />
+      <Route path="/practice/:track/:difficulty" element={<Guard><PracticeTaskListPage /></Guard>} />
+      <Route path="/practice/:track/:difficulty/:taskId" element={<Guard><PracticeTaskPage /></Guard>} />
       <Route path="/settings" element={<Guard><SettingsPage /></Guard>} />
       <Route path="/stats" element={<Guard><StatsPage /></Guard>} />
       <Route path="/admin" element={<Guard admin><AdminPage /></Guard>} />

@@ -1,3 +1,0 @@
-# react-router uses real paths, so a hard reload of /materials or /auth/callback must still
-# be served index.html instead of a 404.
-/*  /index.html  200

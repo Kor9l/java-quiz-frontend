@@ -136,6 +136,11 @@ export default function MaterialsPage() {
                 <button className="btn" onClick={() => navigate("/quiz", {
                   state: { start: { topicIds: [topicId], sectionId, targetCount: 10, infinite: false } },
                 })}>{t("materials.practice")}</button>
+                {material.practiceTaskCount > 0 && (
+                  <button className="btn" onClick={() => navigate(`/practice/${material.practiceTrack}`)}>
+                    {t("materials.practiceTasks", material.practiceTaskCount)}
+                  </button>
+                )}
               </div>
               <div className="markdown">
                 <ReactMarkdown>{loc(material.body)}</ReactMarkdown>
