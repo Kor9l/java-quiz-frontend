@@ -54,7 +54,7 @@ export default function QuizPage() {
   async function quit() {
     const closed = await call(`/api/quiz/${session.id}/quit`);
     if (closed) {
-      navigate("/");
+      navigate("/backend");
     }
   }
 
@@ -96,7 +96,7 @@ export default function QuizPage() {
     return (
       <div className="page">
         <div className="error">{error}</div>
-        <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
       </div>
     );
   }
@@ -108,7 +108,7 @@ export default function QuizPage() {
       <div className="page">
         <h1>{t("quiz.empty.title")}</h1>
         <p>{t("quiz.empty.body")}</p>
-        <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
       </div>
     );
   }
@@ -145,7 +145,7 @@ export default function QuizPage() {
               .catch((err) => setError(err.message));
           }}>{t("quiz.result.again")}</button>
           <button className="btn" onClick={() => navigate("/materials")}>{t("quiz.result.toMaterials")}</button>
-          <button className="btn" onClick={() => navigate("/")}>{t("quiz.result.toMenu")}</button>
+          <button className="btn" onClick={() => navigate("/backend")}>{t("quiz.result.toMenu")}</button>
         </div>
       </div>
     );

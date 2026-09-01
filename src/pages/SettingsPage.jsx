@@ -42,7 +42,7 @@ export default function SettingsPage() {
     <div className="page">
       <div className="row between header-bar">
         <h1>{t("settings.title")}</h1>
-        <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
       </div>
       <div className="col">
         <div className="card col">

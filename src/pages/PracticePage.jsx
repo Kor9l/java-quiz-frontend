@@ -19,7 +19,7 @@ export default function PracticePage() {
           <h1>{t("practice.title")}</h1>
           <p className="muted">{t("practice.subtitle")}</p>
         </div>
-        <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
       </div>
       {tracks === null && <p className="muted">{t("common.loading")}</p>}
       {tracks?.length === 0 && <p className="muted">{t("practice.empty")}</p>}

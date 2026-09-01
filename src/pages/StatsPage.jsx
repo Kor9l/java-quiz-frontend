@@ -40,7 +40,7 @@ export default function StatsPage() {
     <div className="page">
       <div className="row between header-bar">
         <h1>{t("stats.title")}</h1>
-        <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
       </div>
       {empty && <p className="muted">{t("stats.empty")}</p>}
       <div className="tiles" style={{ marginBottom: 16 }}>

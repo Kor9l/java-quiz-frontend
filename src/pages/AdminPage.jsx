@@ -25,7 +25,7 @@ export default function AdminPage() {
     <div className="page">
       <div className="row between header-bar">
         <h1>{t("admin.title")}</h1>
-        <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
       </div>
       <div className="card">
         <table>
