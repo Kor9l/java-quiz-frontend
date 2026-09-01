@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api";
 import { useApp } from "../AppContext";
+import SettingsGear from "../SettingsGear";
 import { useAuth } from "../AuthContext";
 
 function pct(value) {
@@ -41,10 +42,13 @@ export default function MenuPage() {
           <h1>{t("app.title")}</h1>
           <p className="muted">{t("app.subtitle")}</p>
         </div>
-        <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+        <div className="row">
+          <SettingsGear />
+          <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+        </div>
       </div>
       <div className="menu-grid">
-        <button className="btn menu-btn" onClick={() => navigate("/quiz")}>
+        <button className="btn menu-btn" onClick={() => navigate("/quiz/setup")}>
           <strong>
             {t("menu.start")}
             <span className={`level ${track.toLowerCase()}`}>{t(`level.${track}`)}</span>
@@ -58,10 +62,6 @@ export default function MenuPage() {
         <button className="btn menu-btn" onClick={() => navigate("/practice")}>
           <strong>{t("menu.practice")}</strong>
           <span>{t("menu.practice.hint", practiceSolved, practiceTotal)}</span>
-        </button>
-        <button className="btn menu-btn" onClick={() => navigate("/settings")}>
-          <strong>{t("menu.settings")}</strong>
-          <span>{t("menu.settings.hint")}</span>
         </button>
         <button className="btn menu-btn" onClick={() => navigate("/stats")}>
           <strong>{t("menu.stats")}</strong>

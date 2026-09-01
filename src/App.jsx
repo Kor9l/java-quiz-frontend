@@ -18,6 +18,10 @@ import WordsPage from "./pages/WordsPage";
 import WordGroupsPage from "./pages/WordGroupsPage";
 import WordGroupPage from "./pages/WordGroupPage";
 import WordAddPage from "./pages/WordAddPage";
+import QuizSetupPage from "./pages/QuizSetupPage";
+import EnglishQuizSetupPage from "./pages/EnglishQuizSetupPage";
+import EnglishQuizPage from "./pages/EnglishQuizPage";
+import EnglishStatsPage from "./pages/EnglishStatsPage";
 
 function Guard({ children, admin }) {
   const { user, ready } = useAuth();
@@ -45,6 +49,9 @@ export default function App() {
       {/* "/" is now the choice between the two modules; the backend menu moved a level down. */}
       <Route path="/" element={<Guard><ModulesPage /></Guard>} />
       <Route path="/backend" element={<Guard><MenuPage /></Guard>} />
+      {/* Topics, count and behaviour are chosen here, between pressing start and the
+          first question, and the round that follows remembers them. */}
+      <Route path="/quiz/setup" element={<Guard><QuizSetupPage /></Guard>} />
       <Route path="/quiz" element={<Guard><QuizPage /></Guard>} />
       <Route path="/materials" element={<Guard><MaterialsPage /></Guard>} />
       <Route path="/materials/:topicId/:sectionId" element={<Guard><MaterialsPage /></Guard>} />
@@ -60,6 +67,9 @@ export default function App() {
       <Route path="/english/groups" element={<Guard><WordGroupsPage /></Guard>} />
       <Route path="/english/groups/:groupId" element={<Guard><WordGroupPage /></Guard>} />
       <Route path="/english/add" element={<Guard><WordAddPage /></Guard>} />
+      <Route path="/english/quiz/setup" element={<Guard><EnglishQuizSetupPage /></Guard>} />
+      <Route path="/english/quiz" element={<Guard><EnglishQuizPage /></Guard>} />
+      <Route path="/english/stats" element={<Guard><EnglishStatsPage /></Guard>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
