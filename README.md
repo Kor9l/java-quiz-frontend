@@ -61,11 +61,33 @@ screen under it comes back there rather than to `/`.
   the server reports Google as unconfigured.
 - Module chooser (`/`), then the backend menu (`/backend`): quiz (think → reveal 5 options →
   answer → explanation), materials, settings, stats
-- Practice → SQL → difficulty → task. The task screen shows the dataset schema, the statement
-  and the result being aimed at; you write a query, run it, and the backend compares your rows
-  with the reference solution's. Any query producing the same result counts as correct.
-  SQL articles and exercises link to each other: a task offers the section it drills, and a
-  section offers its exercises alongside its quiz.
+- Practice → track → difficulty → task, on two tracks that share one screen. **SQL** shows the
+  dataset schema, the statement and the result being aimed at; you write a query, run it, and the
+  backend compares your rows with the reference solution's. **Java** shows the class you have to
+  write and the calls it will be graded by — the calls are the specification, so they are listed
+  rather than hidden — and you write a class that is compiled and run. Either way, anything
+  producing the same result counts as correct.
+
+  Only four things differ between the tracks, and they live in one `TRACKS` table at the top of
+  `PracticeTaskPage`: which field the starter comes from, which field the submission is posted
+  in, whether the editor indents after a brace, and a handful of labels. Everything else — the
+  statement, the hint, the outcome banner, the explanation, the sources — is the same screen.
+
+  Java answers carry two things SQL ones do not. **Compiler diagnostics** come back with a line
+  and a column and are shown against the learner's own source, with the offending line numbers
+  marked in the editor's gutter; a diagnostic the backend flags as *not* in the submission means
+  the class does not have the shape the calls need, and is shown without a position, because it
+  points at generated code the learner cannot see. And a run is reported **call by call** rather
+  than as a table: what each call returned, what it should have returned, and anything it
+  printed, so the one that disagreed is the one that stands out.
+
+  Articles and exercises link to each other on both tracks: a task offers the section it drills,
+  and a section offers its exercises alongside its quiz.
+
+  The editor is a textarea with a line-number gutter, `Tab` for indent and `Enter` keeping the
+  indentation it was on — not a real code editor. CodeMirror is a heavier dependency than this
+  whole bundle, and the gutter only exists because a Java diagnostic arrives as a line number and
+  has to be findable.
 - English (`/english`): the vocabulary. `/english/words` lists every word the learner can reach,
   grouped, with a search box, a favourites filter and a star per word. `/english/groups` lists the
   groups and creates new ones; opening one edits its words in place. `/english/add` bulk-adds,

@@ -135,6 +135,10 @@ p { margin: 0; }
   width: 100%;
 }
 .menu-btn strong { display: block; font-size: 17px; color: var(--text-strong); }
+/* Each line of a menu button is its own line. Two spans ran together before the practice
+   screens started showing a hint and a count on the same button. The .row exception is for the
+   buttons that lay a title and a chip out side by side. */
+.menu-btn span:not(.row) { display: block; }
 .menu-btn span { color: var(--muted); font-size: 13px; }
 
 .chip {
@@ -268,22 +272,109 @@ th { color: var(--muted); font-weight: 600; }
 .banner.success { background: var(--success-bg); color: var(--success); }
 .banner.danger { background: var(--danger-bg); color: var(--danger); }
 
-/* Practice: SQL editor, dataset schema and result grids. */
-.sql-editor {
-  width: 100%;
-  min-height: 180px;
-  resize: vertical;
-  font-family: "Cascadia Mono", Consolas, monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  tab-size: 2;
+/* Practice: the code editor, dataset schema and result grids. */
+
+/* Gutter and text are two elements sharing one box, so every metric that decides where a line
+   sits has to be identical in both — the numbers drift out of alignment otherwise. */
+.code-editor {
+  display: flex;
+  align-items: stretch;
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 12px;
   background: var(--code-bg);
-  color: var(--text-strong);
+  overflow: hidden;
 }
-.sql-editor:focus { border-color: var(--accent); }
+.code-editor:focus-within { border-color: var(--accent); }
+.code-editor-gutter,
+.code-editor-text {
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 14px;
+  line-height: 21px;
+  padding: 12px 0;
+  margin: 0;
+  border: 0;
+}
+.code-editor-gutter {
+  flex: 0 0 auto;
+  padding-left: 10px;
+  padding-right: 8px;
+  text-align: right;
+  color: var(--muted);
+  background: var(--card-alt);
+  user-select: none;
+  overflow: hidden;
+}
+.gutter-line { white-space: pre; }
+/* A line the compiler complained about, so the number is worth finding. */
+.gutter-line.flagged { color: var(--danger); font-weight: 700; }
+.code-editor-text {
+  flex: 1 1 auto;
+  min-height: 240px;
+  resize: vertical;
+  tab-size: 2;
+  padding-left: 10px;
+  padding-right: 12px;
+  background: transparent;
+  color: var(--text-strong);
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+}
+.code-editor-text:focus { outline: none; }
+
+/* One compiler message: where it is, then what it says. */
+.diagnostic {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  background: var(--code-bg);
+  border-left: 3px solid var(--danger);
+  border-radius: 0 8px 8px 0;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+.diagnostic-where {
+  flex: 0 0 auto;
+  font-family: "Cascadia Mono", Consolas, monospace;
+  color: var(--muted);
+}
+.diagnostic-message {
+  font-family: "Cascadia Mono", Consolas, monospace;
+  color: var(--text-strong);
+  white-space: pre-wrap;
+}
+
+/* One Java case: the call, what it returned, and anything it printed. */
+.case-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  background: var(--code-bg);
+  border-left: 3px solid var(--success);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 10px;
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 13px;
+}
+.case-row.differs { border-left-color: var(--danger); }
+@media (min-width: 640px) {
+  .case-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .case-output { grid-column: 1 / -1; }
+}
+.case-label { color: var(--muted); overflow-wrap: anywhere; }
+.case-values { display: flex; flex-wrap: wrap; gap: 10px; }
+.case-value { color: var(--text-strong); overflow-wrap: anywhere; }
+.case-expected { color: var(--danger); overflow-wrap: anywhere; }
+.case-output {
+  margin: 0;
+  padding: 6px 8px;
+  background: var(--card-alt);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
 
 /* Result sets can be wider than the card; scroll the grid, never the page. */
 .table-scroll { overflow-x: auto; }
