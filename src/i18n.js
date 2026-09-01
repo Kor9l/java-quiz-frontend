@@ -270,6 +270,10 @@ export const messages = {
   "english.add.importing": "Importing…",
   "english.add.result": "%d words added to \"%s\"",
   "english.add.rejected": "Lines that could not be read",
+  "english.add.error.line": "Line %d: %s",
+  "english.add.error.MISSING_SEPARATOR": "no em or en dash between the English and the translation",
+  "english.add.error.EMPTY_SIDE": "one side of the dash is empty",
+  "english.add.error.MISSING_FIELDS": "a word and its translation are both required",
   "english.add.openGroup": "Open the group",
   "common.loading": "Loading…"
 },
@@ -544,6 +548,10 @@ export const messages = {
   "english.add.importing": "Импортируем…",
   "english.add.result": "Добавлено слов: %d — в «%s»",
   "english.add.rejected": "Строки, которые не удалось разобрать",
+  "english.add.error.line": "Строка %d: %s",
+  "english.add.error.MISSING_SEPARATOR": "нет длинного или среднего тире между словом и переводом",
+  "english.add.error.EMPTY_SIDE": "одна сторона от тире пустая",
+  "english.add.error.MISSING_FIELDS": "нужны и слово, и перевод",
   "english.add.openGroup": "Открыть группу",
   "common.loading": "Загрузка…"
 }

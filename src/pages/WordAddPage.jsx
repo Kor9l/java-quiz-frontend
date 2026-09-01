@@ -5,6 +5,17 @@ import { useApp } from "../AppContext";
 
 const EMPTY_ROW = { text: "", translation: "", example: "" };
 
+/**
+ * A rejected line arrives as a line number and a code, never as a sentence — the wording is this
+ * side's job. A code this build has no wording for still shows the line and the code itself,
+ * which beats an empty bullet when the backend is a version ahead.
+ */
+function rejectedLine(t, error) {
+  const key = `english.add.error.${error.code}`;
+  const reason = t(key);
+  return t("english.add.error.line", error.line, reason === key ? error.code : reason);
+}
+
 /** Bulk add: a pasted vocabulary list, or rows typed into a grid. */
 export default function WordAddPage() {
   const { t } = useApp();
@@ -87,7 +98,9 @@ export default function WordAddPage() {
         <button className="btn" onClick={() => navigate("/english")}>{t("common.back")}</button>
       </div>
 
-      {result && (
+      {/* Only when something actually landed: a green "0 words added" above a list of rejected
+          lines says the opposite of what happened. */}
+      {result?.imported > 0 && (
         <div className="banner success" style={{ marginBottom: 16 }}>
           <div>{t("english.add.result", result.imported, result.groupTitle)}</div>
           <button
@@ -103,7 +116,9 @@ export default function WordAddPage() {
         <div className="banner" style={{ marginBottom: 16 }}>
           <strong>{t("english.add.rejected")}</strong>
           <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
-            {result.errors.map((line) => <li key={line}>{line}</li>)}
+            {result.errors.map((error) => (
+              <li key={error.line}>{rejectedLine(t, error)}</li>
+            ))}
           </ul>
         </div>
       )}

@@ -74,4 +74,9 @@ screen under it comes back there rather than to `/`.
   What a learner may change is the backend's call, not this UI's: a group arrives with an
   `editable` flag, and a read-only group renders as a plain list with no controls on it. Shared
   groups are read-only for everyone but admins; your own are always yours.
+
+  A line a bulk import could not read comes back as a line number and a code
+  (`MISSING_SEPARATOR`, `EMPTY_SIDE`, `MISSING_FIELDS`), never as a sentence — the wording lives
+  in `english.add.error.*` here, because only this side knows the reader's language. A code this
+  build has no wording for still renders, as the line number and the bare code.
 - Admin (role `ADMIN` only): user list and role change
