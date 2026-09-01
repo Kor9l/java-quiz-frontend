@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../api";
 import { useApp } from "../AppContext";
 import { useAuth } from "../AuthContext";
+import SettingsGear from "../SettingsGear";
 
 // The counts a module reports differ by module, so each one names the two numbers its own
 // hint takes. A module the backend grows later still renders — without a hint line.
@@ -31,6 +32,7 @@ export default function ModulesPage() {
         </div>
         <div className="row">
           <span className="muted">{user?.email}</span>
+          <SettingsGear />
           <button className="btn" onClick={logout}>{t("auth.logout")}</button>
         </div>
       </div>
