@@ -311,3 +311,30 @@ th { color: var(--muted); font-weight: 600; }
 }
 .check { display: flex; gap: 8px; align-items: center; }
 .header-bar { margin-bottom: 18px; }
+
+/* English: the module chooser and the vocabulary lists. */
+.module-btn { padding: 26px 20px; }
+.module-btn strong { font-size: 20px; }
+
+/* A word list is long, so rows are separated by a rule rather than by the usual gap. */
+.word-list { gap: 0; }
+.word-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 7px 0;
+  border-top: 1px solid var(--border);
+}
+.word-list > .word-row:first-child { border-top: 0; }
+.word-example { font-size: 13px; font-style: italic; }
+.word-score { font-size: 12px; white-space: nowrap; }
+.star {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  font-size: 17px;
+  line-height: 1;
+}
+.star:hover, .star.on { color: var(--warning); }

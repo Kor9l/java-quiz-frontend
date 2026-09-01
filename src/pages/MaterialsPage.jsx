@@ -72,7 +72,7 @@ export default function MaterialsPage() {
           <h1>{t("materials.title")}</h1>
           <p className="muted">{t("materials.progress", read, total)}</p>
         </div>
-        <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
       </div>
       <p className="muted" style={{ marginBottom: 12 }}>
         <Dot state="UNREAD" /> {t("materials.state.unread")} &nbsp;

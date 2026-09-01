@@ -10,7 +10,7 @@ function pct(value) {
 
 export default function MenuPage() {
   const { t, loc, settings, track } = useApp();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
   const [stats, setStats] = useState(null);
@@ -41,10 +41,7 @@ export default function MenuPage() {
           <h1>{t("app.title")}</h1>
           <p className="muted">{t("app.subtitle")}</p>
         </div>
-        <div className="row">
-          <span className="muted">{user?.email}</span>
-          <button className="btn" onClick={logout}>{t("auth.logout")}</button>
-        </div>
+        <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
       </div>
       <div className="menu-grid">
         <button className="btn menu-btn" onClick={() => navigate("/quiz")}>
