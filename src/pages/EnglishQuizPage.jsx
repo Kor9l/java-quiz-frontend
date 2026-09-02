@@ -97,8 +97,21 @@ export default function EnglishQuizPage() {
         }
       }
     }
+    // The hint says "click anywhere", so the click is caught on the window rather than on the
+    // stage card — aiming at the card was the one thing the wording did not ask for. A control
+    // that means something of its own — quit, an option, a link — keeps its click.
+    function onPageClick(event) {
+      if (event.target?.closest?.("button, a, input, select, textarea, label")) {
+        return;
+      }
+      onStageClick();
+    }
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("click", onPageClick);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("click", onPageClick);
+    };
   });
 
   if (error) {
@@ -203,13 +216,13 @@ export default function EnglishQuizPage() {
       <div className="progress-bar" style={{ marginBottom: 16 }}>
         <div style={{ width: session.infinite ? "100%" : `${progress}%`, opacity: session.infinite ? 0.35 : 1 }} />
       </div>
-      <div className="card quiz-stage col" onClick={onStageClick}>
+      <div className="card quiz-stage col">
         {q && (
           <>
             <h2 className="word-prompt">{q.prompt}</h2>
             {session.stage === "QUESTION_ONLY" && <p className="muted">{t("englishQuiz.hint.reveal")}</p>}
             {session.stage === "OPTIONS_REVEALED" && (
-              <div className="col" onClick={(e) => e.stopPropagation()}>
+              <div className="col">
                 <p className="muted">{t("quiz.hint.choose")}</p>
                 {q.options.map((option, index) => (
                   <button

@@ -63,6 +63,9 @@ export function AppStateProvider({ children }) {
     setSettings,
     lang,
     track,
+    // The grammar ladder is a rung count of its own, so it travels beside `track` rather than
+    // replacing it — a screen that shows both must not confuse the two.
+    grammarTrack,
     // The API reports section levels but never filters them out, so the UI labels what sits
     // above the reader instead of hiding it — hiding would hide their progress on it too.
     aboveTrack: (level) => LEVELS.indexOf(level) > LEVELS.indexOf(track),
