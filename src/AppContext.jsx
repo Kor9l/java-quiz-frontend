@@ -9,12 +9,27 @@ const AppContext = createContext(null);
 // below it, which is why the index in this array is the whole comparison.
 export const LEVELS = ["JUNIOR", "MIDDLE", "SENIOR"];
 
+// The English ladder. Same three rungs and the same cumulative rule, different words, because
+// it grades command of a language rather than a career - "junior English" means nothing. Kept
+// as a separate array so an index is never compared across the two.
+export const GRAMMAR_LEVELS = ["BASE", "INTERMEDIATE", "PRO"];
+
+export function levelsFor(module) {
+  return module === "english" ? GRAMMAR_LEVELS : LEVELS;
+}
+
 const defaultSettings = {
   language: "ru",
   level: "MIDDLE",
   selectedTopics: [],
   questionCount: 20,
   infiniteMode: false,
+  // The grammar quiz remembers its own setup, the way the word quiz does. One shared slot
+  // would have a grammar round overwriting the backend track the learner chose.
+  grammarLevel: "BASE",
+  selectedGrammarCourses: [],
+  grammarQuestionCount: 20,
+  grammarInfiniteMode: false,
   shuffleOptions: true,
   smartSelection: true,
   showExplanation: true,
@@ -41,6 +56,7 @@ export function AppStateProvider({ children }) {
 
   const lang = settings.language === "en" ? "en" : "ru";
   const track = LEVELS.includes(settings.level) ? settings.level : "MIDDLE";
+  const grammarTrack = GRAMMAR_LEVELS.includes(settings.grammarLevel) ? settings.grammarLevel : "BASE";
 
   const value = useMemo(() => ({
     settings,
@@ -61,7 +77,7 @@ export function AppStateProvider({ children }) {
       setSettings({ ...defaultSettings, ...saved });
       return saved;
     },
-  }), [settings, lang, track]);
+  }), [settings, lang, track, grammarTrack]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

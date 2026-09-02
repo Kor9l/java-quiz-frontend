@@ -20,13 +20,18 @@ export default function QuizPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const started = useRef(false);
+  // Whichever module the round was started for, that is where "back" and "menu" lead. The
+  // module travels in the start body, so nothing else has to be threaded through.
+  const startBody = location.state?.start || {};
+  const english = startBody.module === "english";
+  const home = english ? "/english/grammar" : "/backend";
+  const materialsHome = english ? "/english/grammar/materials" : "/materials";
 
   useEffect(() => {
     if (started.current) {
       return;
     }
     started.current = true;
-    const startBody = location.state?.start || {};
     api.post("/api/quiz/start", startBody)
       .then(setSession)
       .catch((err) => setError(err.message));
@@ -54,7 +59,7 @@ export default function QuizPage() {
   async function quit() {
     const closed = await call(`/api/quiz/${session.id}/quit`);
     if (closed) {
-      navigate("/backend");
+      navigate(home);
     }
   }
 
@@ -96,7 +101,7 @@ export default function QuizPage() {
     return (
       <div className="page">
         <div className="error">{error}</div>
-        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate(home)}>{t("common.back")}</button>
       </div>
     );
   }
@@ -108,7 +113,7 @@ export default function QuizPage() {
       <div className="page">
         <h1>{t("quiz.empty.title")}</h1>
         <p>{t("quiz.empty.body")}</p>
-        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate(home)}>{t("common.back")}</button>
       </div>
     );
   }
@@ -130,7 +135,7 @@ export default function QuizPage() {
             <div className="col">
               {session.weakSections.map((section) => (
                 <button key={section.key} className="btn"
-                  onClick={() => navigate(`/materials/${section.topicId}/${section.sectionId}`)}>
+                  onClick={() => navigate(`${materialsHome}/${section.topicId}/${section.sectionId}`)}>
                   {loc(section.topicName)} · {loc(section.sectionTitle)}
                 </button>
               ))}
@@ -140,12 +145,12 @@ export default function QuizPage() {
         <div className="row">
           <button className="btn primary" onClick={() => {
             setSession(null);
-            api.post("/api/quiz/start", location.state?.start || {})
+            api.post("/api/quiz/start", startBody)
               .then(setSession)
               .catch((err) => setError(err.message));
           }}>{t("quiz.result.again")}</button>
-          <button className="btn" onClick={() => navigate("/materials")}>{t("quiz.result.toMaterials")}</button>
-          <button className="btn" onClick={() => navigate("/backend")}>{t("quiz.result.toMenu")}</button>
+          <button className="btn" onClick={() => navigate(materialsHome)}>{t("quiz.result.toMaterials")}</button>
+          <button className="btn" onClick={() => navigate(home)}>{t("quiz.result.toMenu")}</button>
         </div>
       </div>
     );

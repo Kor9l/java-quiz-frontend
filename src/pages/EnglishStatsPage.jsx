@@ -42,7 +42,7 @@ export default function EnglishStatsPage() {
     <div className="page">
       <div className="row between header-bar">
         <h1>{t("stats.title")}</h1>
-        <button className="btn" onClick={() => navigate("/english")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/english/vocabulary")}>{t("common.back")}</button>
       </div>
       {!o.totalAnswered && <p className="muted">{t("englishStats.empty")}</p>}
       <div className="tiles" style={{ marginBottom: 16 }}>

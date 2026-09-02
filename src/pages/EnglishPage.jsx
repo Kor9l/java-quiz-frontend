@@ -8,7 +8,7 @@ function pct(value) {
   return `${Math.round((value || 0) * 100)}%`;
 }
 
-/** The English module's own menu, mirroring the backend one a level up. */
+/** The words half of the English module: the vocabulary trainer and its word management. */
 export default function EnglishPage() {
   const { t } = useApp();
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ export default function EnglishPage() {
         </div>
         <div className="row">
           <SettingsGear />
-          <button className="btn" onClick={() => navigate("/")}>{t("common.back")}</button>
+          <button className="btn" onClick={() => navigate("/english")}>{t("common.back")}</button>
         </div>
       </div>
       {groups === null && <p className="muted">{t("common.loading")}</p>}

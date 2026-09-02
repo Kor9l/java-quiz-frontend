@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api";
-import { LEVELS, useApp } from "../AppContext";
+import { levelsFor, useApp } from "../AppContext";
 
 const PRESETS = [10, 20, 30, 50, 100];
 
@@ -9,7 +9,12 @@ const PRESETS = [10, 20, 30, 50, 100];
  * The step between pressing start and the first question: what to be asked about, how much of
  * it, and how. Opens on whatever was chosen last time — the round that follows saves it.
  */
-export default function QuizSetupPage() {
+export default function QuizSetupPage({ module = "backend" }) {
+  const english = module === "english";
+  const levels = levelsFor(module);
+  const topicsPath = english ? "/api/topics?module=english" : "/api/topics";
+  const setupPath = english ? "/api/quiz/setup?module=english" : "/api/quiz/setup";
+  const home = english ? "/english/grammar" : "/backend";
   const { t, loc } = useApp();
   const navigate = useNavigate();
   const [form, setForm] = useState(null);
@@ -17,14 +22,14 @@ export default function QuizSetupPage() {
   const [custom, setCustom] = useState(false);
 
   useEffect(() => {
-    api.get("/api/topics").then(setTopics).catch(() => setTopics([]));
-    api.get("/api/quiz/setup")
+    api.get(topicsPath).then(setTopics).catch(() => setTopics([]));
+    api.get(setupPath)
       .then((saved) => {
         setForm(saved);
         setCustom(!PRESETS.includes(saved.questionCount));
       })
       .catch(() => setForm({
-        topicIds: [], questionCount: 20, infinite: false, level: "MIDDLE",
+        topicIds: [], questionCount: 20, infinite: false, level: levels[0],
         shuffleOptions: true, smartSelection: true, showExplanation: true,
       }));
   }, []);
@@ -56,6 +61,7 @@ export default function QuizSetupPage() {
     navigate("/quiz", {
       state: {
         start: {
+          module,
           topicIds: chosen,
           targetCount: form.questionCount,
           infinite: form.infinite,
@@ -75,14 +81,14 @@ export default function QuizSetupPage() {
           <h1>{t("setup.title")}</h1>
           <p className="muted">{t("setup.subtitle")}</p>
         </div>
-        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate(home)}>{t("common.back")}</button>
       </div>
 
       <div className="col">
         <div className="card col">
           <h3>{t("settings.level")}</h3>
           <div className="row">
-            {LEVELS.map((level) => (
+            {levels.map((level) => (
               <button
                 key={level}
                 className={`btn ${form.level === level ? "primary" : ""}`}
@@ -92,7 +98,7 @@ export default function QuizSetupPage() {
               </button>
             ))}
           </div>
-          <p className="muted">{t("settings.level.hint")}</p>
+          <p className="muted">{t(english ? "settings.level.hint.english" : "settings.level.hint")}</p>
         </div>
 
         <div className="card col">

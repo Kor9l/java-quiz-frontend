@@ -95,7 +95,7 @@ export default function WordAddPage() {
     <div className="page">
       <div className="row between header-bar">
         <h1>{t("english.add.title")}</h1>
-        <button className="btn" onClick={() => navigate("/english")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/english/vocabulary")}>{t("common.back")}</button>
       </div>
 
       {/* Only when something actually landed: a green "0 words added" above a list of rejected

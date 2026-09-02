@@ -72,7 +72,7 @@ export default function EnglishQuizSetupPage() {
           <h1>{t("setup.title")}</h1>
           <p className="muted">{t("setup.subtitle")}</p>
         </div>
-        <button className="btn" onClick={() => navigate("/english")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/english/vocabulary")}>{t("common.back")}</button>
       </div>
 
       <div className="col">

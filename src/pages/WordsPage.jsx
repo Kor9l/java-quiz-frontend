@@ -57,7 +57,7 @@ export default function WordsPage() {
           <h1>{t("english.words.title")}</h1>
           <p className="muted">{t("english.words.counted", shown, total)}</p>
         </div>
-        <button className="btn" onClick={() => navigate("/english")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/english/vocabulary")}>{t("common.back")}</button>
       </div>
 
       <div className="row" style={{ marginBottom: 16 }}>

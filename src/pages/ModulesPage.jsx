@@ -48,6 +48,11 @@ export default function ModulesPage() {
             >
               <strong>{loc(module.name)}</strong>
               {counts && <span>{t(`modules.hint.${module.id}`, ...counts(module.counts))}</span>}
+              {module.sections?.length > 0 && (
+                <span className="muted">
+                  {module.sections.map((section) => loc(section.name)).join(" · ")}
+                </span>
+              )}
             </button>
           );
         })}
