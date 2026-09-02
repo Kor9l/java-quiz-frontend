@@ -58,7 +58,7 @@ export default function EnglishQuizPage() {
   async function quit() {
     const closed = await call(`/api/english/quiz/${session.id}/quit`);
     if (closed) {
-      navigate("/english");
+      navigate("/english/vocabulary");
     }
   }
 
@@ -105,7 +105,7 @@ export default function EnglishQuizPage() {
     return (
       <div className="page">
         <div className="error">{error}</div>
-        <button className="btn" onClick={() => navigate("/english")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/english/vocabulary")}>{t("common.back")}</button>
       </div>
     );
   }
@@ -121,7 +121,7 @@ export default function EnglishQuizPage() {
           <button className="btn primary" onClick={() => navigate("/english/quiz/setup")}>
             {t("englishQuiz.empty.setup")}
           </button>
-          <button className="btn" onClick={() => navigate("/english")}>{t("common.back")}</button>
+          <button className="btn" onClick={() => navigate("/english/vocabulary")}>{t("common.back")}</button>
         </div>
       </div>
     );
@@ -164,7 +164,7 @@ export default function EnglishQuizPage() {
           <button className="btn" onClick={() => navigate("/english/words")}>
             {t("englishQuiz.result.toWords")}
           </button>
-          <button className="btn" onClick={() => navigate("/english")}>{t("quiz.result.toMenu")}</button>
+          <button className="btn" onClick={() => navigate("/english/vocabulary")}>{t("quiz.result.toMenu")}</button>
         </div>
       </div>
     );

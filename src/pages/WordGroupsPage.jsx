@@ -41,7 +41,7 @@ export default function WordGroupsPage() {
     <div className="page">
       <div className="row between header-bar">
         <h1>{t("english.groups.title")}</h1>
-        <button className="btn" onClick={() => navigate("/english")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate("/english/vocabulary")}>{t("common.back")}</button>
       </div>
 
       <form className="card row" onSubmit={create} style={{ marginBottom: 16 }}>

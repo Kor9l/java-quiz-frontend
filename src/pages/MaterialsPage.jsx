@@ -16,7 +16,15 @@ function Level({ level, label }) {
   return <span className={`level ${level.toLowerCase()}`} title={label}>{label}</span>;
 }
 
-export default function MaterialsPage() {
+/**
+ * Serves both modules. The tree, the read state and the article are the same shape either way -
+ * only which topics to ask for and where "back" leads differ, so those are the props.
+ */
+export default function MaterialsPage({ module = "backend" }) {
+  const english = module === "english";
+  const topicsPath = english ? "/api/topics?module=english" : "/api/topics";
+  const home = english ? "/english/grammar" : "/backend";
+  const materialsHome = english ? "/english/grammar/materials" : "/materials";
   const { t, loc, aboveTrack } = useApp();
   const navigate = useNavigate();
   const params = useParams();
@@ -26,7 +34,7 @@ export default function MaterialsPage() {
   const [material, setMaterial] = useState(null);
 
   async function reloadTopics() {
-    const data = await api.get("/api/topics");
+    const data = await api.get(topicsPath);
     setTopics(data);
     if (!topicId && data[0]?.sections?.[0]) {
       setTopicId(data[0].id);
@@ -72,7 +80,7 @@ export default function MaterialsPage() {
           <h1>{t("materials.title")}</h1>
           <p className="muted">{t("materials.progress", read, total)}</p>
         </div>
-        <button className="btn" onClick={() => navigate("/backend")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate(home)}>{t("common.back")}</button>
       </div>
       <p className="muted" style={{ marginBottom: 12 }}>
         <Dot state="UNREAD" /> {t("materials.state.unread")} &nbsp;
@@ -96,7 +104,7 @@ export default function MaterialsPage() {
                   onClick={() => {
                     setTopicId(topic.id);
                     setSectionId(section.id);
-                    navigate(`/materials/${topic.id}/${section.id}`, { replace: true });
+                    navigate(`${materialsHome}/${topic.id}/${section.id}`, { replace: true });
                   }}
                 >
                   <Dot state={section.readState} /> {loc(section.title)}
@@ -134,7 +142,11 @@ export default function MaterialsPage() {
                   <button className="btn" onClick={() => mark(true)}>{t("materials.markRead")}</button>
                 )}
                 <button className="btn" onClick={() => navigate("/quiz", {
-                  state: { start: { topicIds: [topicId], sectionId, targetCount: 10, infinite: false } },
+                  state: {
+                    start: {
+                      module, topicIds: [topicId], sectionId, targetCount: 10, infinite: false,
+                    },
+                  },
                 })}>{t("materials.practice")}</button>
                 {material.practiceTaskCount > 0 && (
                   <button className="btn" onClick={() => navigate(`/practice/${material.practiceTrack}`)}>

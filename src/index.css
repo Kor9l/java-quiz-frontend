@@ -242,6 +242,10 @@ button.option:hover {
 .level.junior { color: var(--success); background: var(--success-bg); }
 .level.middle { color: var(--accent); background: var(--accent-bg); }
 .level.senior { color: var(--warning); background: var(--warning-bg); }
+/* The English ladder, reusing the backend one's three steps so a rung reads the same in both. */
+.level.base { color: var(--success); background: var(--success-bg); }
+.level.intermediate { color: var(--accent); background: var(--accent-bg); }
+.level.pro { color: var(--warning); background: var(--warning-bg); }
 .markdown h1, .markdown h2, .markdown h3 { margin-top: 16px; }
 .markdown p, .markdown ul, .markdown ol { margin: 8px 0; line-height: 1.55; }
 .markdown pre { background: var(--code-bg); padding: 12px; border-radius: 8px; overflow-x: auto; }
