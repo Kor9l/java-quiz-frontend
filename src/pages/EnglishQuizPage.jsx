@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { api } from "../api";
 import { useApp } from "../AppContext";
+import Pronounce from "../Pronounce";
 
 const LETTERS = ["A", "B", "C", "D", "E"];
 
@@ -164,6 +165,7 @@ export default function EnglishQuizPage() {
                     </div>
                     {word.example && <div className="muted word-example">{word.example}</div>}
                   </div>
+                  <Pronounce text={word.text} />
                   {word.groupTitle && <span className="chip">{word.groupTitle}</span>}
                 </div>
               ))}
@@ -184,6 +186,8 @@ export default function EnglishQuizPage() {
   }
 
   const q = session.question;
+  // Which side of the card is the English one, and so the side that can be spoken.
+  const enToRu = session.direction === "EN_RU";
   const target = session.infinite ? 0 : session.targetCount;
   const progress = target ? Math.min(100, (session.askedCount / target) * 100) : 0;
 
@@ -219,7 +223,12 @@ export default function EnglishQuizPage() {
       <div className="card quiz-stage col">
         {q && (
           <>
-            <h2 className="word-prompt">{q.prompt}</h2>
+            <div className="row">
+              <h2 className="word-prompt">{q.prompt}</h2>
+              {/* The speakers follow the English word: beside the prompt in one direction,
+                  beside the answer in the other, where it only arrives once it is over. */}
+              {enToRu && <Pronounce text={q.prompt} />}
+            </div>
             {session.stage === "QUESTION_ONLY" && <p className="muted">{t("englishQuiz.hint.reveal")}</p>}
             {session.stage === "OPTIONS_REVEALED" && (
               <div className="col">
@@ -245,7 +254,8 @@ export default function EnglishQuizPage() {
                   return (
                     <div key={index} className={cls}>
                       <span className="letter">{LETTERS[index]}</span>
-                      <span>{option}</span>
+                      <span className="grow">{option}</span>
+                      {!enToRu && index === q.correctIndex && <Pronounce text={option} />}
                     </div>
                   );
                 })}

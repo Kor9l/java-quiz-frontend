@@ -440,3 +440,18 @@ th { color: var(--muted); font-weight: 600; }
   line-height: 1;
 }
 .star:hover, .star.on { color: var(--warning); }
+
+/* Pronunciation: two small buttons that sit beside the word rather than under it, because the
+   word is what they belong to and the card is read left to right. */
+.word-prompt { margin: 0; }
+.speak { display: inline-flex; align-items: center; gap: 6px; }
+.speak-btn {
+  padding: 4px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+/* Speaking is the only state the browser reports back, and on a silent machine it is the one
+   sign that the click was heard at all. */
+.speak-btn.on { border-color: var(--accent); color: var(--accent); }
