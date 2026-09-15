@@ -25,6 +25,12 @@ export default function EnglishQuizPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const started = useRef(false);
+  // The round's clock, chosen on the setup screen. The API has no notion of one — it is this
+  // page that stops asking — so the deadline is a moment in the browser and lives as long as
+  // the page does. A reload starts a fresh round anyway, clock included.
+  const limitMs = Math.max(0, (location.state?.minutes || 0) * 60000);
+  const deadline = useRef(0);
+  const [remaining, setRemaining] = useState(limitMs);
 
   useEffect(() => {
     if (started.current) {
@@ -32,9 +38,28 @@ export default function EnglishQuizPage() {
     }
     started.current = true;
     api.post("/api/english/quiz/start", location.state?.start || {})
-      .then(setSession)
+      .then((round) => {
+        // Counted from the first word rather than from the click, so a slow start is not
+        // charged to the fifteen minutes the learner asked for.
+        deadline.current = Date.now() + limitMs;
+        setSession(round);
+      })
       .catch((err) => setError(err.message));
   }, [location.state]);
+
+  // Read off a wall clock rather than counted down, so a tab that slept for ten minutes comes
+  // back with ten minutes gone — which is what "fifteen minutes of practice" means.
+  useEffect(() => {
+    if (!limitMs || !session || session.stage === "FINISHED") {
+      return undefined;
+    }
+    const tick = () => setRemaining(Math.max(0, deadline.current - Date.now()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [limitMs, session]);
+
+  const timeUp = limitMs > 0 && remaining <= 0;
 
   async function call(path, body) {
     if (!session || busy) {
@@ -69,7 +94,13 @@ export default function EnglishQuizPage() {
     if (session.stage === "QUESTION_ONLY") {
       call(`/api/english/quiz/${session.id}/reveal`);
     } else if (session.stage === "ANSWERED") {
-      call(`/api/english/quiz/${session.id}/advance`);
+      // The word in hand is always finished, however late the clock ran out: taking a question
+      // away mid-thought would be the timer grading the learner rather than timing them. So the
+      // round closes one word after the time — and onto the summary rather than back to the
+      // menu, because a round that ran its course has a result to show.
+      call(timeUp
+        ? `/api/english/quiz/${session.id}/quit`
+        : `/api/english/quiz/${session.id}/advance`);
     }
   }
 
@@ -212,10 +243,18 @@ export default function EnglishQuizPage() {
         <span>{t("quiz.score", session.correctCount, session.answeredCount)}</span>
         <span>{t("quiz.streak", session.streak)}</span>
         <span className="chip">{t(`setup.direction.${session.direction}`)}</span>
+        {limitMs > 0 && (
+          <span className={`chip ${timeUp ? "alarm" : remaining < 60000 ? "soon" : ""}`}>
+            {timeUp ? t("englishQuiz.time.up") : t("englishQuiz.time.left", formatTime(remaining))}
+          </span>
+        )}
       </div>
       <div className="progress-bar" style={{ marginBottom: 16 }}>
         <div style={{ width: session.infinite ? "100%" : `${progress}%`, opacity: session.infinite ? 0.35 : 1 }} />
       </div>
+      {timeUp && session.stage !== "ANSWERED" && (
+        <p className="muted" style={{ marginBottom: 10 }}>{t("englishQuiz.time.lastWord")}</p>
+      )}
       <div className="card quiz-stage col">
         {q && (
           <>
@@ -255,7 +294,7 @@ export default function EnglishQuizPage() {
                     <p>{q.example}</p>
                   </div>
                 )}
-                <p className="muted">{t("quiz.hint.next")}</p>
+                <p className="muted">{timeUp ? t("englishQuiz.time.finish") : t("quiz.hint.next")}</p>
               </div>
             )}
           </>
