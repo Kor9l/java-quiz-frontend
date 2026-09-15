@@ -93,6 +93,14 @@ screen under it comes back there rather than to `/`.
   groups and creates new ones; opening one edits its words in place. `/english/add` bulk-adds,
   either from a pasted list or from typed rows, into an existing group or a new one.
 
+  The round itself (`/english/quiz`) can be given a clock: the setup step offers a limit in
+  minutes, and the round then ends when the time runs out or the words do, whichever comes first.
+  That clock lives here and nowhere else — the API knows about a round, not about how long it was
+  meant to last — so the choice is remembered in `localStorage` instead of in the saved setup, and
+  the time running out stops the round by quitting it, which is what the summary and the
+  statistics are already built on. The word in hand is always finished: a timer that took a
+  question away mid-thought would be grading the learner rather than timing them.
+
   What a learner may change is the backend's call, not this UI's: a group arrives with an
   `editable` flag, and a read-only group renders as a plain list with no controls on it. Shared
   groups are read-only for everyone but admins; your own are always yours.

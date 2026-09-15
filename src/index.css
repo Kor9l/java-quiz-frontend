@@ -153,6 +153,9 @@ p { margin: 0; }
   background: var(--card-alt);
   border: 1px solid var(--border-strong);
 }
+/* The round's clock, once it starts mattering: the last minute, then the word that ends it. */
+.chip.soon { background: var(--warning-bg); border-color: var(--warning); color: var(--warning); }
+.chip.alarm { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
 .dot {
   width: 9px;
   height: 9px;

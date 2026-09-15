@@ -5,6 +5,25 @@ import { useApp } from "../AppContext";
 
 const PRESETS = [10, 20, 30, 50, 100];
 const DIRECTIONS = ["EN_RU", "RU_EN"];
+const MINUTES = [5, 10, 15, 20, 30, 45, 60];
+const MAX_MINUTES = 180;
+
+// The one choice on this screen the backend does not keep. The clock runs in the browser — the
+// API knows about a round, not about how long it was meant to last — so the saved setup has no
+// slot for it, and the screen's promise ("remembered for next time") is kept per browser here.
+const MINUTES_KEY = "java-quiz-english-minutes";
+
+/** 0 is "no limit", which is also where an empty or unusable value lands. */
+function clampMinutes(value) {
+  if (!Number.isFinite(value) || value <= 0) {
+    return 0;
+  }
+  return Math.min(MAX_MINUTES, Math.round(value));
+}
+
+function savedMinutes() {
+  return clampMinutes(Number(localStorage.getItem(MINUTES_KEY)));
+}
 
 /**
  * The English module's setup step. Same shape as the backend one, plus the choice that only
@@ -17,8 +36,13 @@ export default function EnglishQuizSetupPage() {
   const [form, setForm] = useState(null);
   const [groups, setGroups] = useState([]);
   const [custom, setCustom] = useState(false);
+  const [minutes, setMinutes] = useState(0);
+  const [customMinutes, setCustomMinutes] = useState(false);
 
   useEffect(() => {
+    const limit = savedMinutes();
+    setMinutes(limit);
+    setCustomMinutes(limit > 0 && !MINUTES.includes(limit));
     api.get("/api/english/groups").then(setGroups).catch(() => setGroups([]));
     api.get("/api/english/quiz/setup")
       .then((saved) => {
@@ -52,6 +76,8 @@ export default function EnglishQuizSetupPage() {
     .reduce((sum, group) => sum + group.wordCount, 0);
 
   function start() {
+    const limit = clampMinutes(minutes);
+    localStorage.setItem(MINUTES_KEY, String(limit));
     navigate("/english/quiz", {
       state: {
         start: {
@@ -61,6 +87,7 @@ export default function EnglishQuizSetupPage() {
           direction: form.direction,
           favoritesOnly: form.favoritesOnly,
         },
+        minutes: limit,
       },
     });
   }
@@ -157,6 +184,61 @@ export default function EnglishQuizSetupPage() {
                 />
               )}
             </>
+          )}
+        </div>
+
+        <div className="card col">
+          <h3>{t("setup.time")}</h3>
+          <p className="muted">{t("setup.time.hint")}</p>
+          <div className="row">
+            <button
+              className={`btn ${!customMinutes && minutes === 0 ? "primary" : ""}`}
+              onClick={() => {
+                setCustomMinutes(false);
+                setMinutes(0);
+              }}
+            >
+              {t("setup.time.none")}
+            </button>
+            {MINUTES.map((n) => (
+              <button
+                key={n}
+                className={`btn ${!customMinutes && minutes === n ? "primary" : ""}`}
+                onClick={() => {
+                  setCustomMinutes(false);
+                  setMinutes(n);
+                }}
+              >
+                {t("common.minutes", n)}
+              </button>
+            ))}
+            <button
+              className={`btn ${customMinutes ? "primary" : ""}`}
+              onClick={() => {
+                setCustomMinutes(true);
+                if (minutes === 0) {
+                  setMinutes(15);
+                }
+              }}
+            >
+              {t("settings.count.custom")}
+            </button>
+          </div>
+          {customMinutes && (
+            <input
+              className="input"
+              type="number"
+              min={1}
+              max={MAX_MINUTES}
+              value={minutes}
+              onChange={(e) => setMinutes(clampMinutes(Number(e.target.value)))}
+            />
+          )}
+          {/* The two limits are easy to set against each other: a quarter of an hour and ten
+              words is ten words. Said here rather than silently switching the count off — the
+              count is the learner's choice too. */}
+          {minutes > 0 && !form.infinite && (
+            <p className="muted">{t("setup.time.countWins", form.targetCount)}</p>
           )}
         </div>
 
