@@ -57,6 +57,7 @@ export function AppStateProvider({ children }) {
   const lang = settings.language === "en" ? "en" : "ru";
   const track = LEVELS.includes(settings.level) ? settings.level : "MIDDLE";
   const grammarTrack = GRAMMAR_LEVELS.includes(settings.grammarLevel) ? settings.grammarLevel : "BASE";
+  const trackFor = (module) => (module === "english" ? grammarTrack : track);
 
   const value = useMemo(() => ({
     settings,
@@ -68,7 +69,18 @@ export function AppStateProvider({ children }) {
     grammarTrack,
     // The API reports section levels but never filters them out, so the UI labels what sits
     // above the reader instead of hiding it — hiding would hide their progress on it too.
-    aboveTrack: (level) => LEVELS.indexOf(level) > LEVELS.indexOf(track),
+    //
+    // Asked per module, because the two ladders are separate arrays on purpose and an index
+    // from one says nothing about the other: read against LEVELS, every grammar level is a -1
+    // and every grammar section comes back "not above", which is the same answer a correctly
+    // placed section gives and so cannot be told apart from one. A level the ladder does not
+    // know is not above anything either — that is a section whose level this build has no
+    // word for, and dimming it would be inventing one.
+    aboveTrack: (level, module) => {
+      const ladder = levelsFor(module);
+      const rung = ladder.indexOf(level);
+      return rung >= 0 && rung > ladder.indexOf(trackFor(module));
+    },
     t: (key, ...args) => translate(lang, key, ...args),
     loc: (text) => {
       if (!text) return "";
@@ -79,6 +91,17 @@ export function AppStateProvider({ children }) {
       const saved = await api.put("/api/settings", next);
       setSettings({ ...defaultSettings, ...saved });
       return saved;
+    },
+    // A round's setup — the track included — is written back by `POST /api/quiz/start`, not by
+    // this client, so the track held here goes stale the moment a learner starts a round on a
+    // different one, and the menu badge and the section labels would both go on describing the
+    // track they were asked to replace. Re-read rather than assume the round got the level it
+    // asked for: a level off the other module's ladder falls back to that module's default,
+    // and only the server knows which.
+    async refreshSettings() {
+      const data = await api.get("/api/settings");
+      setSettings({ ...defaultSettings, ...data });
+      return data;
     },
   }), [settings, lang, track, grammarTrack]);
 

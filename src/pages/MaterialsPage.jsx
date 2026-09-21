@@ -99,8 +99,8 @@ export default function MaterialsPage({ module = "backend" }) {
                   className={`tree-item ${topic.id === topicId && section.id === sectionId ? "active" : ""}`}
                   // Dimmed rather than hidden: the section is still readable, and the reader may
                   // already have progress on it.
-                  style={aboveTrack(section.level) ? { opacity: 0.6 } : undefined}
-                  title={aboveTrack(section.level) ? t("materials.level.above") : undefined}
+                  style={aboveTrack(section.level, module) ? { opacity: 0.6 } : undefined}
+                  title={aboveTrack(section.level, module) ? t("materials.level.above") : undefined}
                   onClick={() => {
                     setTopicId(topic.id);
                     setSectionId(section.id);
@@ -126,7 +126,7 @@ export default function MaterialsPage({ module = "backend" }) {
                 {topics.find((topic) => topic.id === material.topicId)
                   ? `${loc(topics.find((topic) => topic.id === material.topicId).name)} · ` : ""}
                 {t("materials.estimated", material.estimatedMinutes)} · {t("materials.questionCount", material.questionCount)}
-                {aboveTrack(material.level) ? ` · ${t("materials.level.above")}` : ""}
+                {aboveTrack(material.level, module) ? ` · ${t("materials.level.above")}` : ""}
               </p>
               {material.readState === "NEEDS_REREAD" && (
                 <div className="banner">
