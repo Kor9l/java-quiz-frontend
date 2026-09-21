@@ -13,7 +13,7 @@ function formatTime(ms) {
 }
 
 export default function QuizPage() {
-  const { t, loc } = useApp();
+  const { t, loc, refreshSettings } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const [session, setSession] = useState(null);
@@ -33,7 +33,20 @@ export default function QuizPage() {
     }
     started.current = true;
     api.post("/api/quiz/start", startBody)
-      .then(setSession)
+      .then((next) => {
+        setSession(next);
+        // The round has just saved its whole setup as the standing one. The track is no
+        // longer the reason to re-read — the setup step writes that to `/api/settings` the
+        // moment it is picked — but the chosen topics, the question count and the infinite
+        // flag are still written here and nowhere else, and the menu tile's hint is read from
+        // them, so without this it goes on describing the setup before last. A round drilling
+        // one section saves nothing, the way the backend has it, so there is nothing to
+        // re-read after one. Not fatal if it fails — the round is already running, and the
+        // hint just stays stale until the next load, as it did before this call.
+        if (!startBody.sectionId) {
+          refreshSettings().catch(() => {});
+        }
+      })
       .catch((err) => setError(err.message));
   }, [location.state]);
 

@@ -15,7 +15,7 @@ export default function QuizSetupPage({ module = "backend" }) {
   const topicsPath = english ? "/api/topics?module=english" : "/api/topics";
   const setupPath = english ? "/api/quiz/setup?module=english" : "/api/quiz/setup";
   const home = english ? "/english/grammar" : "/backend";
-  const { t, loc } = useApp();
+  const { t, loc, saveSettings } = useApp();
   const navigate = useNavigate();
   const [form, setForm] = useState(null);
   const [topics, setTopics] = useState([]);
@@ -48,6 +48,23 @@ export default function QuizSetupPage({ module = "backend" }) {
       selected.add(id);
     }
     set({ topicIds: [...selected] });
+  }
+
+  /**
+   * The track is the one choice on this step that outlives the round: it is what the menu
+   * badge reads and what the section labels are measured against, so it is written to
+   * `/api/settings` as soon as it is picked rather than waiting for a round to start and
+   * carry it. Each ladder has its own field — `level` is junior/middle/senior and
+   * `grammarLevel` base/intermediate/pro — so a grammar choice can never land on the backend
+   * track. The level still travels in the start body too; that remains the per-round
+   * override, and here the two simply agree.
+   */
+  function chooseLevel(level) {
+    set({ level });
+    // Swallowed on purpose: the round about to start carries this level in its own body, so a
+    // failed write costs the standing choice, not the round, and this step has no error
+    // surface to put it on. The next pick, or the round itself, writes it again.
+    saveSettings({ [english ? "grammarLevel" : "level"]: level }).catch(() => {});
   }
 
   // Nothing ticked means every topic, including ones added later — so it is sent as an empty
@@ -92,7 +109,7 @@ export default function QuizSetupPage({ module = "backend" }) {
               <button
                 key={level}
                 className={`btn ${form.level === level ? "primary" : ""}`}
-                onClick={() => set({ level })}
+                onClick={() => chooseLevel(level)}
               >
                 {t(`level.${level}`)}
               </button>
