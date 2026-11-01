@@ -9,6 +9,10 @@ function Dot({ state }) {
   return <span className={cls} />;
 }
 
+// A native <option> cannot hold the coloured dot, so the dropdown marks read state with a glyph;
+// the legend pairs each glyph with its dot.
+const MARK = { UNREAD: "○", READ: "✓", NEEDS_REREAD: "↻" };
+
 function Level({ level, label }) {
   if (!level) {
     return null;
@@ -61,6 +65,23 @@ export default function MaterialsPage({ module = "backend" }) {
       .catch(() => setMaterial(null));
   }, [topicId, sectionId]);
 
+  const currentTopic = topics.find((topic) => topic.id === topicId);
+
+  function pickSection(nextTopicId, nextSectionId) {
+    setTopicId(nextTopicId);
+    setSectionId(nextSectionId);
+    navigate(`${materialsHome}/${nextTopicId}/${nextSectionId}`, { replace: true });
+  }
+
+  // A new topic opens on its first section, so the article never shows one topic under another's
+  // name.
+  function pickTopic(nextTopicId) {
+    const first = topics.find((topic) => topic.id === nextTopicId)?.sections?.[0];
+    if (first) {
+      pickSection(nextTopicId, first.id);
+    }
+  }
+
   const total = topics.reduce((sum, topic) => sum + topic.sectionCount, 0);
   // Sections flagged for re-reading are read too — the desktop counts them the same way.
   const read = topics.reduce((sum, topic) => sum + topic.readCount + topic.rereadCount, 0);
@@ -83,36 +104,40 @@ export default function MaterialsPage({ module = "backend" }) {
         <button className="btn" onClick={() => navigate(home)}>{t("common.back")}</button>
       </div>
       <p className="muted" style={{ marginBottom: 12 }}>
-        <Dot state="UNREAD" /> {t("materials.state.unread")} &nbsp;
-        <Dot state="READ" /> {t("materials.state.read")} &nbsp;
-        <Dot state="NEEDS_REREAD" /> {t("materials.state.reread")}
+        <Dot state="UNREAD" /> {MARK.UNREAD} {t("materials.state.unread")} &nbsp;
+        <Dot state="READ" /> {MARK.READ} {t("materials.state.read")} &nbsp;
+        <Dot state="NEEDS_REREAD" /> {MARK.NEEDS_REREAD} {t("materials.state.reread")}
       </p>
-      <div className="layout-split">
-        <div className="card">
-          <h3>{t("materials.tree")}</h3>
-          {topics.map((topic) => (
-            <div key={topic.id} style={{ marginBottom: 10 }}>
-              <strong>{loc(topic.name)}</strong>
-              {topic.sections.map((section) => (
-                <button
-                  key={section.id}
-                  className={`tree-item ${topic.id === topicId && section.id === sectionId ? "active" : ""}`}
-                  // Dimmed rather than hidden: the section is still readable, and the reader may
-                  // already have progress on it.
-                  style={aboveTrack(section.level, module) ? { opacity: 0.6 } : undefined}
-                  title={aboveTrack(section.level, module) ? t("materials.level.above") : undefined}
-                  onClick={() => {
-                    setTopicId(topic.id);
-                    setSectionId(section.id);
-                    navigate(`${materialsHome}/${topic.id}/${section.id}`, { replace: true });
-                  }}
-                >
-                  <Dot state={section.readState} /> {loc(section.title)}
-                  <Level level={section.level} label={t(`level.${section.level}`)} />
-                </button>
+      <div className="col">
+        <div className="card materials-picker">
+          <label>
+            <span className="label">{t("materials.topic")}</span>
+            <select className="select" value={topicId} onChange={(e) => pickTopic(e.target.value)}>
+              {topics.map((topic) => (
+                <option key={topic.id} value={topic.id}>
+                  {loc(topic.name)} ({topic.readCount + topic.rereadCount}/{topic.sectionCount})
+                </option>
               ))}
-            </div>
-          ))}
+            </select>
+          </label>
+          <label>
+            <span className="label">{t("materials.section")}</span>
+            <select className="select" value={sectionId} onChange={(e) => pickSection(topicId, e.target.value)}>
+              {(currentTopic?.sections || []).map((section) => (
+                <option
+                  key={section.id}
+                  value={section.id}
+                  // Marked rather than hidden: the section is still readable, and the reader may
+                  // already have progress on it.
+                  title={aboveTrack(section.level, module) ? t("materials.level.above") : undefined}
+                >
+                  {MARK[section.readState] || MARK.UNREAD} {loc(section.title)}
+                  {section.level ? ` · ${t(`level.${section.level}`)}` : ""}
+                  {aboveTrack(section.level, module) ? ` (${t("materials.level.above")})` : ""}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         <div className="card">
           {!material && <p className="muted">{t("materials.empty")}</p>}

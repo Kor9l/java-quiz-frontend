@@ -220,6 +220,12 @@ button.option:hover {
 @media (min-width: 860px) {
   .layout-split { grid-template-columns: 280px 1fr; }
 }
+/* Topic and subtopic dropdowns over the article: stacked on a phone, side by side once there is
+   room. The topic is the narrower of the two - its names are short, the section titles are not. */
+.materials-picker { display: grid; gap: 12px; }
+@media (min-width: 640px) {
+  .materials-picker { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+}
 .tree-item {
   width: 100%;
   text-align: left;
