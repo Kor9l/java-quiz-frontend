@@ -20,7 +20,8 @@ export default function MenuPage() {
   useEffect(() => {
     api.get("/api/topics").then(setTopics).catch(() => setTopics([]));
     api.get("/api/stats").then(setStats).catch(() => setStats(null));
-    api.get("/api/practice").then(setPractice).catch(() => setPractice([]));
+    api.get("/api/practice")
+      .then((all) => setPractice(all.filter((track) => track.track !== "grammar"))).catch(() => setPractice([]));
   }, []);
 
   const selected = settings.selectedTopics || [];

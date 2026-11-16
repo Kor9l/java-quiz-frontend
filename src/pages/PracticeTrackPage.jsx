@@ -20,7 +20,7 @@ export default function PracticeTrackPage() {
           <h1>{t(`practice.track.${track}`)}</h1>
           <p className="muted">{t("practice.difficulty.title")}</p>
         </div>
-        <button className="btn" onClick={() => navigate("/practice")}>{t("common.back")}</button>
+        <button className="btn" onClick={() => navigate(track === "grammar" ? "/english/grammar" : "/practice")}>{t("common.back")}</button>
       </div>
       {summary === null && <p className="muted">{t("common.loading")}</p>}
       {summary === false && <p className="muted">{t("practice.empty")}</p>}

@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { api } from "../api";
 import { useApp } from "../AppContext";
 import CodeEditor from "../CodeEditor";
+import GrammarTaskPage from "./GrammarTaskPage";
 
 /** Banner colour by outcome: solved, ran but wrong, or did not run at all. */
 const BANNER_BY_STATUS = {
@@ -218,7 +219,16 @@ function CaseResults({ result, expected, output, t }) {
   );
 }
 
+/**
+ * Grammar exercises share the route and the API with the code tracks but none of the editor,
+ * dataset or result grid, so they get a page of their own.
+ */
 export default function PracticeTaskPage() {
+  const { track } = useParams();
+  return track === "grammar" ? <GrammarTaskPage /> : <CodeTaskPage />;
+}
+
+function CodeTaskPage() {
   const { t, loc } = useApp();
   const navigate = useNavigate();
   const { track, difficulty, taskId } = useParams();
