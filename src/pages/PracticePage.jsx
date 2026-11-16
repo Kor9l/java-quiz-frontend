@@ -9,7 +9,9 @@ export default function PracticePage() {
   const [tracks, setTracks] = useState(null);
 
   useEffect(() => {
-    api.get("/api/practice").then(setTracks).catch(() => setTracks([]));
+    api.get("/api/practice")
+      // Grammar is reached from the English module, not from the backend one.
+      .then((all) => setTracks(all.filter((track) => track.track !== "grammar"))).catch(() => setTracks([]));
   }, []);
 
   return (

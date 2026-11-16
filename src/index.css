@@ -464,3 +464,30 @@ th { color: var(--muted); font-weight: 600; }
 /* Speaking is the only state the browser reports back, and on a silent machine it is the one
    sign that the click was heard at all. */
 .speak-btn.on { border-color: var(--accent); color: var(--accent); }
+
+/* Grammar practice: a text with inputs in its gaps, and the chunks of a word-order prompt. */
+.gap-text { display: flex; flex-direction: column; gap: 10px; }
+.gap-line { margin: 0; line-height: 2.1; font-size: 16px; }
+.gap-slot { white-space: nowrap; }
+.gap-slot sup { margin: 0 2px 0 4px; font-size: 11px; }
+.gap-input {
+  font: inherit;
+  color: var(--text);
+  background: var(--card-alt);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 2px 6px;
+  max-width: 100%;
+}
+.gap-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.gap-input.wide { width: 100%; box-sizing: border-box; padding: 8px 10px; }
+.gap-input.ok { border-color: var(--success); background: var(--success-bg); }
+.gap-input.bad { border-color: var(--danger); background: var(--danger-bg); }
+.chunk-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.chunk {
+  background: var(--accent-bg);
+  color: var(--text-strong);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 15px;
+}

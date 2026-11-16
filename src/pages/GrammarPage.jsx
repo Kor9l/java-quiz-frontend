@@ -12,9 +12,12 @@ export default function GrammarPage() {
   const { t, loc, settings, grammarTrack } = useApp();
   const navigate = useNavigate();
   const [courses, setCourses] = useState(null);
+  const [practice, setPractice] = useState(null);
 
   useEffect(() => {
     api.get("/api/topics?module=english").then(setCourses).catch(() => setCourses([]));
+    // Exercises live on the shared practice API as the grammar track.
+    api.get("/api/practice/tracks/grammar").then(setPractice).catch(() => setPractice(false));
   }, []);
 
   const list = courses || [];
@@ -68,6 +71,14 @@ export default function GrammarPage() {
         >
           <strong>{t("menu.materials")}</strong>
           <span>{t("menu.materials.hint", read, sections)}</span>
+        </button>
+        <button
+          className="btn menu-btn"
+          onClick={() => navigate("/practice/grammar")}
+          disabled={!practice?.taskCount}
+        >
+          <strong>{t("menu.practice")}</strong>
+          <span>{t("menu.practice.hint", practice?.solvedCount || 0, practice?.taskCount || 0)}</span>
         </button>
       </div>
       {list.length > 0 && (
